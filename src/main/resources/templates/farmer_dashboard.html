@@ -1,25 +1,107 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Farmer Dashboard</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h2>Farmer Dashboard</h2>-->
+
+<!--<h3>Available Machines</h3>-->
+<!--<table border="1">-->
+<!--    <tr>-->
+<!--        <th>Machine</th>-->
+<!--        <th>Type</th>-->
+<!--        <th>Rent/Day</th>-->
+<!--        <th>Action</th>-->
+<!--    </tr>-->
+<!--    <tr th:each="m : ${machines}">-->
+<!--        <td th:text="${m.name}"></td>-->
+<!--        <td th:text="${m.type}"></td>-->
+<!--        <td th:text="${m.rentalPricePerDay}"></td>-->
+<!--        <td><a th:href="@{'/book/' + ${m.id}}">Book</a></td>-->
+<!--    </tr>-->
+<!--</table>-->
+
+<!--<h3>My Bookings</h3>-->
+<!--<table border="1">-->
+<!--    <tr>-->
+<!--        <th>Machine</th>-->
+<!--        <th>Start</th>-->
+<!--        <th>End</th>-->
+<!--        <th>Status</th>-->
+<!--    </tr>-->
+<!--    <tr th:each="b : ${bookings}">-->
+<!--        <td th:text="${b.machine.name}"></td>-->
+<!--        <td th:text="${b.startDate}"></td>-->
+<!--        <td th:text="${b.endDate}"></td>-->
+<!--        <td th:text="${b.status}"></td>-->
+<!--    </tr>-->
+<!--</table>-->
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Farmer Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .subsidy { color: green; font-weight: bold; }
+        .private { color: black; }
+        .gov-icon { content: '🏛️'; }
+        .private-icon { content: '🏠'; }
+    </style>
 </head>
 <body>
 <h2>Farmer Dashboard</h2>
+<div th:if="${farmer != null}">
+    <p>Welcome, <b th:text="${farmer.name}"></b>!</p>
+    <p th:if="${farmer.verified}">
+        Subsidy Status: <span class="subsidy">Eligible (Verified, <span th:text="${farmer.landSizeInAcres}"></span> Acres)</span>
+    </p>
+    <p th:if="${!farmer.verified}">
+        Subsidy Status: <span style="color: red;">Not Yet Eligible (Pending Verification)</span>
+    </p>
+</div>
 
 <h3>Available Machines</h3>
 <table border="1">
     <tr>
-        <th>Machine</th>
         <th>Type</th>
-        <th>Rent/Day</th>
-        <th>Action</th>
+        <th>Machine</th>
+        <th>Location</th>
+        <th>Owner</th>
+        <th>Base Rate/Day</th>
+        <th>Your Rate/Day</th>
+        <th>Book</th>
     </tr>
-    <tr th:each="m : ${machines}">
+    <tr th:each="m : ${machines}" th:if="${m.available}">
+        <td>
+            <span th:if="${m.owner.ownerType == 'GOVERNMENT_CHC'}" class="gov-icon">🏛️ GOVT</span>
+            <span th:if="${m.owner.ownerType == 'PRIVATE'}" class="private-icon">🏠 PRIVATE</span>
+        </td>
         <td th:text="${m.name}"></td>
-        <td th:text="${m.type}"></td>
-        <td th:text="${m.rentalPricePerDay}"></td>
-        <td><a th:href="@{'/book/' + ${m.id}}">Book</a></td>
+        <td th:text="${m.location}"></td>
+        <td th:text="${m.owner.name}"></td>
+        <td th:text_="${'₹' + m.rentalPricePerDay}"></td>
+        <td>
+             <span th:class="${m.owner.ownerType == 'GOVERNMENT_CHC' and prices[m.id] < m.rentalPricePerDay} ? 'subsidy' : 'private'"
+                   th:text_="${'₹' + prices[m.id]}"></span>
+        </td>
+        <td>
+            <form th:action="@{/book}" method="post">
+                <input type="hidden" name="machineId" th:value="${m.id}" />
+                <label>From:</label>
+                <input type="date" name="startDate" required>
+                <label>To:</label>
+                <input type="date" name="endDate" required>
+                <button type="submit">Book</button>
+            </form>
+        </td>
     </tr>
 </table>
 
@@ -27,15 +109,21 @@
 <table border="1">
     <tr>
         <th>Machine</th>
+        <th>Owner</th>
         <th>Start</th>
         <th>End</th>
+        <th>Final Price</th>
         <th>Status</th>
     </tr>
     <tr th:each="b : ${bookings}">
         <td th:text="${b.machine.name}"></td>
+        <td th:text="${b.machine.owner.name}"></td>
         <td th:text="${b.startDate}"></td>
         <td th:text="${b.endDate}"></td>
-        <td th:text="${b.status}"></td>
+        <td th:text_="${'₹' + b.finalAmount}"></td>
+        <td th:text="${b.status}"
+            th:style_="${b.status == 'Approved' ? 'color:green' : (b.status == 'Rejected' ? 'color:red' : 'color:orange')}">
+        </td>
     </tr>
 </table>
 </body>
