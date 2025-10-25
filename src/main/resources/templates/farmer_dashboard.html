@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Farmer Dashboard</title>
+</head>
+<body>
+<h2>Farmer Dashboard</h2>
+
+<h3>Available Machines</h3>
+<table border="1">
+    <tr>
+        <th>Machine</th>
+        <th>Type</th>
+        <th>Rent/Day</th>
+        <th>Action</th>
+    </tr>
+    <tr th:each="m : ${machines}">
+        <td th:text="${m.name}"></td>
+        <td th:text="${m.type}"></td>
+        <td th:text="${m.rentalPricePerDay}"></td>
+        <td><a th:href="@{'/book/' + ${m.id}}">Book</a></td>
+    </tr>
+</table>
+
+<h3>My Bookings</h3>
+<table border="1">
+    <tr>
+        <th>Machine</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Status</th>
+    </tr>
+    <tr th:each="b : ${bookings}">
+        <td th:text="${b.machine.name}"></td>
+        <td th:text="${b.startDate}"></td>
+        <td th:text="${b.endDate}"></td>
+        <td th:text="${b.status}"></td>
+    </tr>
+</table>
+</body>
+</html>

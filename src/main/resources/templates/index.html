@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Agricultural Machinery Rental System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4fff0;
+            color: #333;
+            text-align: center;
+            margin-top: 10%;
+        }
+        h1 {
+            color: #2e7d32;
+        }
+        p {
+            font-size: 18px;
+        }
+        a {
+            text-decoration: none;
+            color: white;
+            background-color: #43a047;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+        a:hover {
+            background-color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+<h1>🌾 Welcome to Smart Agricultural Machinery Rental System 🌾</h1>
+<p>Connecting Farmers, Machinery Owners, and CHCs across Maharashtra.</p>
+<a href="/swagger-ui/index.html">Open API Documentation</a>
+<a th:href="@{/farmer/dashboard}">
+    Go to Farmer Dashboard
+</a>
+</body>
+</html>
