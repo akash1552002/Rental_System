@@ -1,10 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Owner Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .container { display: flex; gap: 30px; }
+        .col { flex: 1; }
+        form div { margin-bottom: 10px; }
+        label { display: inline-block; width: 150px;} /* Increased width */
+    </style>
 </head>
 <body>
+<h2>Owner Dashboard</h2>
+<p>Welcome, <b th:text="${owner.name}"></b>! (<span th:text="${owner.ownerType}"></span>)</p>
 
+<div class="container">
+    <div class="col">
+        <h3>My Machines</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Rate/Day</th>
+                <th>Available</th>
+                <th>Image URL</th> </tr>
+            <tr th:each="m : ${machines}">
+                <td th:text="${m.name}"></td>
+                <td th:text="${m.type}"></td>
+                <td th:text_="${'₹' + m.rentalPricePerDay}"></td>
+                <td th:text="${m.available} ? 'Yes' : 'No'" th:style_="${m.available} ? 'color:green' : 'color:red'"></td>
+                <td th:text="${m.imageUrl}"></td> </tr>
+        </table>
+
+        <h3>Add New Machine</h3>
+        <form th:action="@{/owner/add-machine}" method="post" th:object="${newMachine}">
+            <div>
+                <label>Name:</label>
+                <input type="text" th:field="*{name}" required/>
+            </div>
+            <div>
+                <label>Type (Tractor, Harvester):</label>
+                <input type="text" th:field="*{type}" required/>
+            </div>
+            <div>
+                <label>Base Rate/Day (₹):</label>
+                <input type="number" th:field="*{rentalPricePerDay}" required/>
+            </div>
+            <div>
+                <label>Location:</label>
+                <input type="text" th:field="*{location}" required/>
+            </div>
+            <div>
+                <label>Image URL:</label>
+                <input type="text" th:field="*{imageUrl}" placeholder="e.g., https://i.imgur.com/your-image.jpg"/>
+            </div>
+            <button type="submit">Add Machine</button>
+        </form>
+    </div>
+    <div class="col">
+        <h3>Pending Booking Requests</h3>
+        <table>
+            <tr>
+                <th>Machine</th>
+                <th>Farmer</th>
+                <th>Dates</th>
+                <th>My Earning</th>
+                <th>Action</th>
+            </tr>
+            <tr th:each="b : ${bookings}" th:if="${b.status == 'Pending'}">
+                <td th:text="${b.machine.name}"></td>
+                <td th:text="${b.farmer.name}"></td>
+                <td th:text_="${b.startDate + ' to ' + b.endDate}"></td>
+                <td th:text_="${'₹' + (b.totalAmount - b.platformCommission)}"></td>
+                <td>
+                    <form th:action="@{/booking/approve}" method="post" style="display: inline;">
+                        <input type="hidden" name="bookingId" th:value="${b.id}" />
+                        <button type="submit" style="color: green;">Approve</button>
+                    </form>
+                    <form th:action="@{/booking/reject}" method="post" style="display: inline;">
+                        <input type="hidden" name="bookingId" th:value="${b.id}" />
+                        <button type="submit" style="color: red;">Reject</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+
+        <h3>Confirmed Bookings</h3>
+        <table>
+            <tr>
+                <th>Machine</th>
+                <th>Farmer</th>
+                <th>Dates</th>
+                <th>Status</th>
+            </tr>
+            <tr th:each="b : ${bookings}" th:if="${b.status != 'Pending'}">
+                <td th:text="${b.machine.name}"></td>
+                <td th:text="${b.farmer.name}"></td>
+                <td th:text_="${b.startDate + ' to ' + b.endDate}"></td>
+                <td th:text="${b.status}" th:style_="${b.status == 'Approved' ? 'color:green' : 'color:red'}"></td>
+            </tr>
+        </table>
+    </div>
+</div>
 </body>
 </html>

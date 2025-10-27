@@ -1,42 +1,220 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Farmer Dashboard</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h2>Farmer Dashboard</h2>-->
+
+<!--<h3>Available Machines</h3>-->
+<!--<table border="1">-->
+<!--    <tr>-->
+<!--        <th>Machine</th>-->
+<!--        <th>Type</th>-->
+<!--        <th>Rent/Day</th>-->
+<!--        <th>Action</th>-->
+<!--    </tr>-->
+<!--    <tr th:each="m : ${machines}">-->
+<!--        <td th:text="${m.name}"></td>-->
+<!--        <td th:text="${m.type}"></td>-->
+<!--        <td th:text="${m.rentalPricePerDay}"></td>-->
+<!--        <td><a th:href="@{'/book/' + ${m.id}}">Book</a></td>-->
+<!--    </tr>-->
+<!--</table>-->
+
+<!--<h3>My Bookings</h3>-->
+<!--<table border="1">-->
+<!--    <tr>-->
+<!--        <th>Machine</th>-->
+<!--        <th>Start</th>-->
+<!--        <th>End</th>-->
+<!--        <th>Status</th>-->
+<!--    </tr>-->
+<!--    <tr th:each="b : ${bookings}">-->
+<!--        <td th:text="${b.machine.name}"></td>-->
+<!--        <td th:text="${b.startDate}"></td>-->
+<!--        <td th:text="${b.endDate}"></td>-->
+<!--        <td th:text="${b.status}"></td>-->
+<!--    </tr>-->
+<!--</table>-->
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Farmer Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th { background-color: #f2f2f2; }
+        .subsidy { color: green; font-weight: bold; }
+        .private { color: black; }
+        .gov-icon { content: '🏛️'; }
+        .private-icon { content: '🏠'; }
+
+        /* --- NEW CARD STYLES --- */
+        .machine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .machine-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Ensures image corners are rounded */
+        }
+        .machine-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover; /* Prevents image stretching */
+            background-color: #eee; /* Placeholder color */
+        }
+        .machine-card .card-body {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .machine-card .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .machine-card .card-info {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .machine-card .card-price {
+            margin-bottom: 15px;
+        }
+        .machine-card .card-price .base-rate {
+            text-decoration: line-through;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .machine-card .card-price .final-rate {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .machine-card .card-booking-form {
+            margin-top: auto; /* Pushes form to the bottom */
+        }
+        .machine-card .card-booking-form input[type="date"] {
+            width: calc(100% - 10px);
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+        .machine-card .card-booking-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .machine-card .card-booking-form button:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
 <h2>Farmer Dashboard</h2>
+<div th:if="${farmer != null}">
+    <p>Welcome, <b th:text="${farmer.name}"></b>!</p>
+    <p th:if="${farmer.verified}">
+        Subsidy Status: <span class="subsidy">Eligible (Verified, <span th:text="${farmer.landSizeInAcres}"></span> Acres)</span>
+    </p>
+    <p th:if="${!farmer.verified}">
+        Subsidy Status: <span style="color: red;">Not Yet Eligible (Pending Verification)</span>
+    </p>
+</div>
 
 <h3>Available Machines</h3>
-<table border="1">
-    <tr>
-        <th>Machine</th>
-        <th>Type</th>
-        <th>Rent/Day</th>
-        <th>Action</th>
-    </tr>
-    <tr th:each="m : ${machines}">
-        <td th:text="${m.name}"></td>
-        <td th:text="${m.type}"></td>
-        <td th:text="${m.rentalPricePerDay}"></td>
-        <td><a th:href="@{'/book/' + ${m.id}}">Book</a></td>
-    </tr>
-</table>
 
+<div class="machine-grid">
+    <div class="machine-card" th:each="m : ${machines}" th:if="${m.available}">
+
+        <img th:src="${m.imageUrl}" alt="Machine Image" />
+
+        <div class="card-body">
+
+            <div class="card-title">
+                <span th:if="${m.owner.ownerType == 'GOVERNMENT_CHC'}" class="gov-icon">🏛️</span>
+                <span th:if="${m.owner.ownerType == 'PRIVATE'}" class="private-icon">🏠</span>
+                <span th:text="${m.name}"></span>
+            </div>
+
+            <div class="card-info">
+                <strong>Owner:</strong> <span th:text="${m.owner.name}"></span><br/>
+                <strong>Location:</strong> <span th:text="${m.location}"></span>
+            </div>
+
+            <div class="card-price">
+                <span class="final-rate"
+                      th:classappend="${m.owner.ownerType == 'GOVERNMENT_CHC' and prices[m.id] < m.rentalPricePerDay} ? 'subsidy' : 'private'"
+                      th:text_="${'₹' + prices[m.id] + ' / day'}">
+                </span>
+
+                <span class="base-rate"
+                      th:if="${prices[m.id] < m.rentalPricePerDay}"
+                      th:text_="${'₹' + m.rentalPricePerDay}">
+                </span>
+            </div>
+
+            <form class="card-booking-form" th:action="@{/book}" method="post">
+                <input type="hidden" name="machineId" th:value="${m.id}" />
+                <label>From:</label>
+                <input type="date" name="startDate" required>
+                <label>To:</label>
+                <input type="date" name="endDate" required>
+                <button type="submit">Book Now</button>
+            </form>
+        </div>
+    </div>
+</div>
 <h3>My Bookings</h3>
 <table border="1">
     <tr>
         <th>Machine</th>
+        <th>Owner</th>
         <th>Start</th>
         <th>End</th>
+        <th>Final Price</th>
         <th>Status</th>
     </tr>
     <tr th:each="b : ${bookings}">
         <td th:text="${b.machine.name}"></td>
+        <td th:text="${b.machine.owner.name}"></td>
         <td th:text="${b.startDate}"></td>
         <td th:text="${b.endDate}"></td>
-        <td th:text="${b.status}"></td>
+        <td th:text_="${'₹' + b.finalAmount}"></td>
+        <td th:text="${b.status}"
+            th:style_="${b.status == 'Approved' ? 'color:green' : (b.status == 'Rejected' ? 'color:red' : 'color:orange')}">
+        </td>
     </tr>
 </table>
 </body>
-</html>
+</html>>

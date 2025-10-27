@@ -2,39 +2,219 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Smart Agricultural Machinery Rental System</title>
+    <title>IndiFarm - Machinery Rental</title>
     <style>
+        /* --- Your CSS kept exactly as before --- */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4fff0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7fdf7;
             color: #333;
-            text-align: center;
-            margin-top: 10%;
         }
-        h1 {
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .navbar .logo { font-size: 1.5rem; font-weight: bold; color: #2e7d32; }
+        .navbar .nav-buttons { display: flex; gap: 10px; }
+        .btn { padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; }
+        .btn-secondary { background-color: #e0e0e0; color: #333; }
+        .btn-primary { background-color: #43a047; color: white; }
+        .btn-primary:hover { background-color: #2e7d32; }
+
+        .hero { text-align: center; padding: 80px 20px; }
+        .hero h1 { font-size: 3rem; color: #2e7d32; margin-bottom: 15px; }
+        .hero p { font-size: 1.25rem; color: #555; margin-bottom: 30px; }
+
+        .search-bar { display: flex; justify-content: center; gap: 10px; padding: 20px; background-color: rgba(255,255,255,0.9); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto; }
+        .search-bar input[type="text"] { padding: 15px; font-size: 1rem; border: 1px solid #ccc; border-radius: 8px; flex: 1; }
+        .btn-search { background-color: #ff9800; color: white; font-size: 1rem; padding: 15px 30px; border-radius: 8px; border: none; cursor: pointer; }
+        .btn-search:hover { background-color: #f57c00; }
+
+        .categories { padding: 40px 20px; text-align: center; background-color: #fff; }
+        .categories h2 { font-size: 2rem; margin-bottom: 30px; color: #333; }
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .category-card { background-color: #fff; border: 1px solid #eee; border-radius: 10px; padding: 20px 15px; text-decoration: none; color: #333; font-weight: 600; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.3s ease; cursor: pointer; }
+        .category-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); color: #2e7d32; }
+        .category-card .icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+
+        .footer { text-align: center; padding: 20px; background-color: #333; color: #eee; margin-top: 40px; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); }
+        .modal-content { background-color: #fff; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .modal-header h2 { margin: 0; color: #2e7d32; }
+        .modal-close { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal-body { padding-top: 20px; }
+        .subcategory-list { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .subcategory-list li { padding: 10px; background-color: #f9f9f9; border: 1px solid #eee; border-radius: 5px; }
+        .subcategory-list li:hover { background-color: #f0f0f0; color: #2e7d32; }
+
+       .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: #eee;
+            margin-top: 40px;
+        }
+        .how-it-works {
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .how-it-works h2 {
+            font-size: 2rem;
+            margin-bottom: 40px;
             color: #2e7d32;
         }
-        p {
-            font-size: 18px;
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
         }
-        a {
-            text-decoration: none;
-            color: white;
-            background-color: #43a047;
-            padding: 10px 20px;
-            border-radius: 8px;
+        .step {
+            max-width: 300px;
         }
-        a:hover {
-            background-color: #2e7d32;
+        .step .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        .step h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-<h1>🌾 Welcome to Smart Agricultural Machinery Rental System 🌾</h1>
-<p>Connecting Farmers, Machinery Owners, and CHCs across Maharashtra.</p>
-<a href="/swagger-ui/index.html">Open API Documentation</a>
-<a th:href="@{/farmer/dashboard}">
-    Go to Farmer Dashboard
-</a>
+
+<nav class="navbar">
+    <div class="logo">🌾 IndiFarm Rental</div>
+    <div class="nav-buttons">
+        <a th:href="@{/login}" class="btn btn-secondary">Login</a>
+        <a th:href="@{/register}" class="btn btn-primary">Register</a>
+    </div>
+</nav>
+
+<section class="hero">
+    <h1>Rent the machinery you need, when you need it.</h1>
+    <p>Connecting farmers with private owners and government CHCs across Maharashtra.</p>
+    <form th:action="@{/search}" method="get" class="search-bar">
+        <input type="text" name="machinery" placeholder="e.g., 'Tractor', 'Rotavator'"/>
+        <input type="text" name="location" placeholder="e.g., 'Bhiwandi', 'Thane'"/>
+        <button type="submit" class="btn btn-search">Search</button>
+    </form>
+</section>
+
+<section class="categories">
+    <h2>Browse by Category</h2>
+    <div class="category-grid">
+
+        <th:block th:each="cat : ${categories}">
+            <!-- Category card without sub-machines -->
+            <a th:if="${cat.machines == null or cat.machines.isEmpty()}"
+               th:href="@{/search(machinery=${cat.searchQuery})}"
+               class="category-card">
+                <span class="icon" th:text="${cat.icon}"></span>
+                <span th:text="${cat.name}"></span>
+            </a>
+
+            <!-- Category card with sub-machines (opens modal) -->
+            <div th:if="${cat.machines != null and !cat.machines.isEmpty()}"
+                 class="category-card"
+                 th:attr="onclick='openCategoryModal(\'' + ${cat.name} + '\')'">
+                <span class="icon" th:text="${cat.icon}"></span>
+                <span th:text="${cat.name}"></span>
+            </div>
+        </th:block>
+
+    </div>
+</section>
+
+</section>
+<section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+        <div class="step">
+            <div class="icon">🔎</div>
+            <h3>1. Search for Machinery</h3>
+            <p>Find the exact equipment you need in your local area, from both CHCs and private owners.</p>
+        </div>
+        <div class="step">
+            <div class="icon">✅</div>
+            <h3>2. Book & Verify</h3>
+            <p>Book instantly or get approved for subsidies. We handle all the verification.</p>
+        </div>
+        <div class="step">
+            <div class="icon">🚜</div>
+            <h3>3. Get Your Work Done</h3>
+            <p>Pick up your machinery and start your work with confidence.</p>
+        </div>
+    </div>
+</section>
+<footer class="footer">
+    <p>&copy; 2025 IndiFarm Machinery Rental. All rights reserved.</p>
+</footer>
+
+<!-- Modal -->
+<div id="categoryModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Select Sub-Category</h2>
+            <span class="modal-close" onclick="closeCategoryModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <ul id="modalSubcategoryList" class="subcategory-list"></ul>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+        var allCategoriesData = /*[[${categories}]]*/ [];
+    /*]]>*/
+
+        const modal = document.getElementById("categoryModal");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalList = document.getElementById("modalSubcategoryList");
+
+        function openCategoryModal(categoryName) {
+            const category = allCategoriesData.find(c => c.name === categoryName);
+            if (!category || !category.machines) return;
+
+            modalTitle.innerText = "Select " + category.name + " Equipment";
+            modalList.innerHTML = "";
+
+            category.machines.forEach(function(machine) {
+                const li = document.createElement("li");
+                const a = document.createElement("a");
+                a.href = "/search?machinery=" + encodeURIComponent(machine);
+                a.innerText = machine;
+                li.appendChild(a);
+                modalList.appendChild(li);
+            });
+
+            modal.style.display = "block";
+        }
+
+        function closeCategoryModal() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeCategoryModal();
+            }
+        }
+</script>
+
 </body>
+</html>
+
 </html>

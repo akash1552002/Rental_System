@@ -1,19 +1,112 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Register</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h2>Register</h2>-->
+<!--<form th:action="@{/register}" method="post" th:object="${user}">-->
+<!--    <label>Username:</label><input type="text" th:field="*{username}" required><br>-->
+<!--    <label>Password:</label><input type="password" th:field="*{password}" required><br>-->
+<!--    <label>Role:</label>-->
+<!--    <select th:field="*{role}">-->
+<!--        <option value="FARMER">Farmer</option>-->
+<!--        <option value="OWNER">Owner</option>-->
+<!--    </select><br>-->
+<!--    <button type="submit">Register</button>-->
+<!--</form>-->
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Register</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        form { max-width: 500px; }
+        div { margin-bottom: 10px; }
+        label { display: inline-block; width: 120px; }
+        input, select { width: 250px; padding: 5px; }
+        .farmer-fields, .owner-fields { display: none; }
+    </style>
 </head>
 <body>
 <h2>Register</h2>
-<form th:action="@{/register}" method="post" th:object="${user}">
-    <label>Username:</label><input type="text" th:field="*{username}" required><br>
-    <label>Password:</label><input type="password" th:field="*{password}" required><br>
-    <label>Role:</label>
-    <select th:field="*{role}">
-        <option value="FARMER">Farmer</option>
-        <option value="OWNER">Owner</option>
-    </select><br>
+<form th:action="@{/register}" method="post" th:object="${registrationRequest}">
+    <div>
+        <label>Username:</label>
+        <input type="text" th:field="*{username}" required><br>
+    </div>
+    <div>
+        <label>Password:</label>
+        <input type="password" th:field="*{password}" required><br>
+    </div>
+    <div>
+        <label>Role:</label>
+        <select th:field="*{role}" id="roleSelect" required>
+            <option value="">Select Role</option>
+            <option value="FARMER">Farmer</option>
+            <option value="OWNER">Owner / CHC</option>
+        </select><br>
+    </div>
+
+    <fieldset id="profile-fields" style="display: none; border: 1px solid #ccc; padding: 10px;">
+        <legend>Profile Details</legend>
+        <div>
+            <label>Full Name:</label>
+            <input type="text" th:field="*{name}" />
+        </div>
+        <div>
+            <label>Phone:</label>
+            <input type="text" th:field="*{phone}" />
+        </div>
+        <div>
+            <label>Email:</label>
+            <input type="email" th:field="*{email}" />
+        </div>
+        <div>
+            <label>Address:</label>
+            <input type="text" th:field="*{address}" />
+        </div>
+        <div>
+            <label>District:</label>
+            <input type="text" th:field="*{district}" />
+        </div>
+    </fieldset>
+
+    <fieldset id="farmer-fields" class="farmer-fields" style="border: 1px solid #ccc; padding: 10px;">
+        <legend>Farmer Details</legend>
+        <div>
+            <label>Aadhar Number:</label>
+            <input type="text" th:field="*{aadharNumber}" />
+        </div>
+        <div>
+            <label>Land Size (Acres):</label>
+            <input type="number" step="0.1" th:field="*{landSizeInAcres}" />
+        </div>
+    </fieldset>
+
     <button type="submit">Register</button>
 </form>
+
+<script>
+    document.getElementById('roleSelect').addEventListener('change', function () {
+        var role = this.value;
+        var farmerFields = document.getElementById('farmer-fields');
+        var profileFields = document.getElementById('profile-fields');
+
+        if (role === 'FARMER') {
+            profileFields.style.display = 'block';
+            farmerFields.style.display = 'block';
+        } else if (role === 'OWNER') {
+            profileFields.style.display = 'block';
+            farmerFields.style.display = 'none';
+        } else {
+            profileFields.style.display = 'none';
+            farmerFields.style.display = 'none';
+        }
+    });
+</script>
+
 </body>
 </html>
