@@ -11,6 +11,7 @@
         .container { display: flex; gap: 30px; }
         .col { flex: 1; }
         form div { margin-bottom: 10px; }
+        label { display: inline-block; width: 150px;} /* Increased width */
     </style>
 </head>
 <body>
@@ -26,13 +27,13 @@
                 <th>Type</th>
                 <th>Rate/Day</th>
                 <th>Available</th>
-            </tr>
+                <th>Image URL</th> </tr>
             <tr th:each="m : ${machines}">
                 <td th:text="${m.name}"></td>
                 <td th:text="${m.type}"></td>
                 <td th:text_="${'₹' + m.rentalPricePerDay}"></td>
                 <td th:text="${m.available} ? 'Yes' : 'No'" th:style_="${m.available} ? 'color:green' : 'color:red'"></td>
-            </tr>
+                <td th:text="${m.imageUrl}"></td> </tr>
         </table>
 
         <h3>Add New Machine</h3>
@@ -52,6 +53,10 @@
             <div>
                 <label>Location:</label>
                 <input type="text" th:field="*{location}" required/>
+            </div>
+            <div>
+                <label>Image URL:</label>
+                <input type="text" th:field="*{imageUrl}" placeholder="e.g., https://i.imgur.com/your-image.jpg"/>
             </div>
             <button type="submit">Add Machine</button>
         </form>

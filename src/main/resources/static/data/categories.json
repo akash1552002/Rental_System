@@ -1,0 +1,101 @@
+[
+  {
+    "name": "Tractors & Power",
+    "icon": "🚜",
+    "searchQuery": "Tractor",
+    "machines": [
+      "2-Wheel Tractor",
+      "4-Wheel Tractor",
+      "Power Tiller",
+      "Diesel Engine",
+      "Electric Motor"
+    ]
+  },
+  {
+    "name": "Land Preparation",
+    "icon": "🌱",
+    "searchQuery": "Land Preparation",
+    "machines": [
+      "Mouldboard Plough",
+      "Disc Plough",
+      "Subsoiler",
+      "Rotavator",
+      "Harrow",
+      "Cultivator",
+      "Land Leveler"
+    ]
+  },
+  {
+    "name": "Sowing & Planting",
+    "icon": "🌽",
+    "searchQuery": "Sowing",
+    "machines": [
+      "Seed Drill",
+      "Planter",
+      "Transplanter",
+      "Dibbler"
+    ]
+  },
+  {
+    "name": "Harvesting & Threshing",
+    "icon": "🌾",
+    "searchQuery": "Harvesting",
+    "machines": [
+      "Sickle",
+      "Scythe",
+      "Reaper",
+      "Combine Harvester",
+      "Forage Harvester",
+      "Thresher",
+      "Winnower",
+      "Sheller",
+      "Grader"
+    ]
+  },
+  {
+    "name": "Irrigation & Sprayers",
+    "icon": "💧",
+    "searchQuery": "Irrigation",
+    "machines": [
+      "Centrifugal Pump",
+      "Submersible Pump",
+      "Sprinkler System",
+      "Drip Irrigation System",
+      "Knapsack Sprayer",
+      "Power Sprayer",
+      "Boom Sprayer",
+      "Duster"
+    ]
+  },
+  {
+    "name": "Haulage & Trailers",
+    "icon": "🧺",
+    "searchQuery": "Haulage",
+    "machines": [
+      "Trolley",
+      "Trailer",
+      "Conveyor Belt",
+      "Elevator",
+      "Auger"
+    ]
+  },
+  {
+    "name": "Livestock & Dairy",
+    "icon": "🐄",
+    "searchQuery": "Livestock",
+    "machines": [
+      "Milking Machine",
+      "Chaff Cutter",
+      "Feed Mixer",
+      "Manure Spreader",
+      "Water Trough",
+      "Feeder"
+    ]
+  },
+  {
+    "name": "View All",
+    "icon": "...",
+    "searchQuery": "",
+    "machines": []
+  }
+]

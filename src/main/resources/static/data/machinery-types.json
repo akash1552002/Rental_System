@@ -1,0 +1,82 @@
+{
+  "Farm_Machinery_And_Equipment": {
+    "Land_Preparation_Equipment": [
+      "Plough (Mouldboard, Disc, Chisel)",
+      "Subsoiler",
+      "Rotavator / Rotary Tiller",
+      "Harrow (Disc, Spring)",
+      "Cultivator",
+      "Leveller / Land Leveler"
+    ],
+    "Sowing_And_Planting_Equipment": [
+      "Seed Drill",
+      "Planter",
+      "Transplanter",
+      "Dibbler"
+    ],
+    "Irrigation_Equipment": [
+      "Centrifugal Pump",
+      "Submersible Pump",
+      "Sprinkler System",
+      "Drip Irrigation System",
+      "Water Pipelines & Hoses"
+    ],
+    "Crop_Protection_Equipment": [
+      "Knapsack Sprayer",
+      "Power Sprayer",
+      "Boom Sprayer",
+      "Duster"
+    ],
+    "Harvesting_Equipment": [
+      "Sickle",
+      "Scythe",
+      "Reaper",
+      "Combine Harvester",
+      "Forage Harvester"
+    ],
+    "Threshing_And_PostHarvest_Equipment": [
+      "Thresher",
+      "Winnower / Grain Cleaner",
+      "Sheller / Dehusker",
+      "Grader / Sorter"
+    ],
+    "Tractors_And_Power_Units": [
+      "Tractor (2-wheel / 4-wheel)",
+      "Power Tiller",
+      "Diesel Engine",
+      "Electric Motor"
+    ],
+    "Material_Handling_Equipment": [
+      "Trolley / Trailer",
+      "Conveyor Belt",
+      "Elevator / Auger"
+    ],
+    "Weeding_And_Intercultural_Equipment": [
+      "Hand Hoe",
+      "Wheel Hoe",
+      "Power Weeder",
+      "Cultivator (Inter-row)"
+    ],
+    "Livestock_And_Dairy_Equipment": [
+      "Milking Machine",
+      "Chaff Cutter",
+      "Feed Mixer / Grinder",
+      "Manure Spreader",
+      "Water Trough / Feeder"
+    ],
+    "Storage_And_Processing_Equipment": [
+      "Grain Storage Bins / Silos",
+      "Cold Storage Unit",
+      "Seed Processing Unit",
+      "Oil Expeller",
+      "Flour Mill"
+    ],
+    "Modern_And_Smart_Farming_Equipment": [
+      "Drone Sprayer",
+      "Soil Sensor / Moisture Meter",
+      "GPS Tractor",
+      "Automated Irrigation System",
+      "Farm Management Software / IoT Devices"
+    ]
+  }
+}

@@ -44,9 +44,9 @@ public class Machine {
     private String location;
     private boolean available = true;
 
+    // --- NEW FIELD ---
+    private String imageUrl; // Will store a URL to the machine's photo
+
     @ManyToOne
     private Owner owner;
-
-    // Removed the empty setOwnershipType method.
-    // We will get this info from owner.getOwnerType()
 }
