@@ -155,6 +155,9 @@
         .login-link a:hover {
             text-decoration: underline;
         }
+        .hidden-field {
+            display: none;
+        }
 
     </style>
 </head>
@@ -170,8 +173,8 @@
 <div class="form-container">
     <h2>Create Your Account</h2>
 
-    <form th:action="@{/register}" method="post" th:object="${registrationRequest}">
-
+<!--    <form th:action="@{/register}" method="post" th:object="${registrationRequest}">-->
+    <form th:action="@{/register}" method="post" th:object="${registrationRequest}" enctype="multipart/form-data">
         <div class="form-row">
             <label for="username">Username:</label>
             <input type="text" id="username" th:field="*{username}" required>
@@ -215,6 +218,17 @@
             </div>
         </fieldset>
 
+<!--        <fieldset id="farmer-fields">-->
+<!--            <legend>Farmer Details (for Subsidy)</legend>-->
+<!--            <div class="form-row">-->
+<!--                <label for="aadharNumber">Aadhar Number:</label>-->
+<!--                <input type="text" id="aadharNumber" th:field="*{aadharNumber}" />-->
+<!--            </div>-->
+<!--            <div class="form-row">-->
+<!--                <label for="landSizeInAcres">Land Size (in Acres):</label>-->
+<!--                <input type="number" step="0.1" id="landSizeInAcres" th:field="*{landSizeInAcres}" />-->
+<!--            </div>-->
+<!--        </fieldset>-->
         <fieldset id="farmer-fields">
             <legend>Farmer Details (for Subsidy)</legend>
             <div class="form-row">
@@ -225,6 +239,21 @@
                 <label for="landSizeInAcres">Land Size (in Acres):</label>
                 <input type="number" step="0.1" id="landSizeInAcres" th:field="*{landSizeInAcres}" />
             </div>
+
+            <div class="form-row">
+                <label for="farmerCategorySelect">Farmer Category:</label>
+                <select id="farmerCategorySelect" th:field="*{farmerCategory}">
+                    <option value="GENERAL">General</option>
+                    <option value="SMALL_MARGINAL">Small / Marginal</option>
+                    <option value="SC_ST">SC / ST</option>
+                </select>
+            </div>
+
+            <div class="form-row hidden-field" id="proof-upload-field">
+                <label for="categoryProofFile">Category Proof (PDF/JPG):</label>
+                <input type="file" id="categoryProofFile" name="categoryProofFile" accept=".pdf,.jpg,.jpeg,.png" />
+            </div>
+
         </fieldset>
 
         <button type="submit" class="btn-register">Register</button>
@@ -236,23 +265,64 @@
 </div>
 
 
+<!--<script>-->
+<!--    document.getElementById('roleSelect').addEventListener('change', function () {-->
+<!--        var role = this.value;-->
+<!--        var farmerFields = document.getElementById('farmer-fields');-->
+<!--        var profileFields = document.getElementById('profile-fields');-->
+
+<!--        // Remove 'visible' class from all to reset-->
+<!--        farmerFields.classList.remove('visible');-->
+<!--        profileFields.classList.remove('visible');-->
+
+<!--        if (role === 'FARMER') {-->
+<!--            profileFields.classList.add('visible');-->
+<!--            farmerFields.classList.add('visible');-->
+<!--        } else if (role === 'OWNER') {-->
+<!--            profileFields.classList.add('visible');-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
 <script>
-    document.getElementById('roleSelect').addEventListener('change', function () {
+    // --- 4. UPDATE SCRIPT ---
+    const roleSelect = document.getElementById('roleSelect');
+    const farmerFields = document.getElementById('farmer-fields');
+    const profileFields = document.getElementById('profile-fields');
+
+    // New fields
+    const categorySelect = document.getElementById('farmerCategorySelect');
+    const proofUploadField = document.getElementById('proof-upload-field');
+
+    // Function to show/hide proof upload
+    function toggleProofField() {
+        const category = categorySelect.value;
+        if (category === 'SMALL_MARGINAL' || category === 'SC_ST') {
+            proofUploadField.style.display = 'block';
+        } else {
+            proofUploadField.style.display = 'none';
+        }
+    }
+
+    // Function to show/hide main sections
+    roleSelect.addEventListener('change', function () {
         var role = this.value;
-        var farmerFields = document.getElementById('farmer-fields');
-        var profileFields = document.getElementById('profile-fields');
-
-        // Remove 'visible' class from all to reset
-        farmerFields.classList.remove('visible');
-        profileFields.classList.remove('visible');
-
         if (role === 'FARMER') {
             profileFields.classList.add('visible');
             farmerFields.classList.add('visible');
+            toggleProofField(); // Check on role change
         } else if (role === 'OWNER') {
             profileFields.classList.add('visible');
+            farmerFields.classList.remove('visible');
+            proofUploadField.style.display = 'none'; // Hide if not farmer
+        } else {
+            profileFields.classList.remove('visible');
+            farmerFields.classList.remove('visible');
+            proofUploadField.style.display = 'none'; // Hide if no role
         }
     });
+
+    // Also check when category itself changes
+    categorySelect.addEventListener('change', toggleProofField);
 </script>
 
 </body>

@@ -19,4 +19,7 @@ public class RegistrationRequest {
     // Farmer-specific fields
     private String aadharNumber;
     private Double landSizeInAcres;
+//    private String farmerCategory;
+
+    private String farmerCategory; // <-- ADD THIS
 }

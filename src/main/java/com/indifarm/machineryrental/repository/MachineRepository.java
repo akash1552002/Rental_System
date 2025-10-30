@@ -28,4 +28,6 @@ public interface MachineRepository extends JpaRepository<Machine, Long> {
             "AND (:locationQuery IS NULL OR LOWER(m.location) LIKE LOWER(CONCAT('%', :locationQuery, '%')))")
     List<Machine> searchMachines(@Param("nameQuery") String nameQuery,
                                  @Param("locationQuery") String locationQuery);
+///
+    List<Machine> findByTypeContainingIgnoreCase(String type);
 }

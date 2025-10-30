@@ -19,7 +19,10 @@ public class MachineService {
     public List<Machine> getAllMachines() {
         return machineRepository.findAll();
     }
-
+//
+public List<Machine> getMachinesByCategory(String category) {
+    return machineRepository.findByTypeContainingIgnoreCase(category);
+}
     public List<Machine> getChcMachines() {
         return machineRepository.findByOwnerOwnerType("GOVERNMENT_CHC");
     }

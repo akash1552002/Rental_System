@@ -204,8 +204,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // MODIFIED: Added "/search" to the permit list
-                        .requestMatchers("/", "/login", "/register", "/search", "/css/**", "/js/**", "/data/**", "/images/**", "/uploads/**").permitAll()
-                        .requestMatchers("/farmer/**").hasRole("FARMER")
+//                        .requestMatchers("/", "/login", "/register", "/search", "/css/**", "/js/**", "/data/**", "/images/**", "/uploads/**").permitAll()
+//                        .requestMatchers("/farmer/**").hasRole("FARMER")
+                                .requestMatchers("/", "/login", "/register", "/search", "/css/**", "/js/**", "/data/**", "/images/**", "/uploads/**", "/proofs/**").permitAll()
+                                .requestMatchers("/farmer/**").hasRole("FARMER")
                         .requestMatchers("/owner/**").hasRole("OWNER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

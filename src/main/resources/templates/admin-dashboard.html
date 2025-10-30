@@ -188,28 +188,69 @@
 
 <div class="container">
     <div class="col">
+<!--        <div class="card">-->
+<!--            <h3>Farmer Verification</h3>-->
+<!--            <p class="description">Review details and verify farmers to make them eligible for subsidies.</p>-->
+
+<!--            <div th:if="${unverifiedFarmers.isEmpty()}">-->
+<!--                <p class="no-data">No farmers are currently pending verification.</p>-->
+<!--            </div>-->
+
+<!--            <table th:if="${!unverifiedFarmers.isEmpty()}">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th>Farmer Name</th>-->
+<!--                    <th>Aadhar</th>-->
+<!--                    <th>Land (Acres)</th>-->
+<!--                    <th>Action</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr th:each="farmer : ${unverifiedFarmers}">-->
+<!--                    <td th:text="${farmer.name}"></td>-->
+<!--                    <td th:text="${farmer.aadharNumber}"></td>-->
+<!--                    <td th:text="${farmer.landSizeInAcres}"></td>-->
+<!--                    <td>-->
+<!--                        <form th:action="@{/admin/verify-farmer}" method="post">-->
+<!--                            <input type="hidden" name="farmerId" th:value="${farmer.id}" />-->
+<!--                            <button type="submit" class="btn-verify">Verify</button>-->
+<!--                        </form>-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
         <div class="card">
             <h3>Farmer Verification</h3>
             <p class="description">Review details and verify farmers to make them eligible for subsidies.</p>
-
-            <div th:if="${unverifiedFarmers.isEmpty()}">
-                <p class="no-data">No farmers are currently pending verification.</p>
-            </div>
 
             <table th:if="${!unverifiedFarmers.isEmpty()}">
                 <thead>
                 <tr>
                     <th>Farmer Name</th>
-                    <th>Aadhar</th>
                     <th>Land (Acres)</th>
+                    <th>Category</th>
+                    <th>Proof</th>
                     <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="farmer : ${unverifiedFarmers}">
                     <td th:text="${farmer.name}"></td>
-                    <td th:text="${farmer.aadharNumber}"></td>
                     <td th:text="${farmer.landSizeInAcres}"></td>
+
+                    <td th:text="${farmer.farmerCategory}"></td>
+
+                    <td>
+                        <a th:if="${farmer.categoryProofUrl}"
+                           th:href="@{${farmer.categoryProofUrl}}"
+                           target="_blank"
+                           style="color: #2e7d32; font-weight: 600;">
+                            View Proof
+                        </a>
+                        <span th:if="${farmer.categoryProofUrl == null}">N/A</span>
+                    </td>
+
                     <td>
                         <form th:action="@{/admin/verify-farmer}" method="post">
                             <input type="hidden" name="farmerId" th:value="${farmer.id}" />
