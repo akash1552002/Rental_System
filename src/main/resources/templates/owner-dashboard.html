@@ -4,107 +4,318 @@
     <meta charset="UTF-8">
     <title>Owner Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .container { display: flex; gap: 30px; }
-        .col { flex: 1; }
-        form div { margin-bottom: 10px; }
-        label { display: inline-block; width: 150px;} /* Increased width */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7fdf7;
+            color: #333;
+        }
+
+        /* --- Navigation Bar --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px; /* Space below navbar */
+        }
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2e7d32;
+            text-decoration: none;
+        }
+        .navbar .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-logout { /* Specific style for logout button */
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        /* --- Main Content --- */
+        .page-header {
+            max-width: 1200px;
+            margin: 0 auto 20px auto;
+            padding: 0 30px;
+        }
+
+        .page-header h2 {
+            margin: 0 0 5px 0;
+            color: #2e7d32;
+        }
+
+        .page-header p {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        /* --- Dashboard Layout --- */
+        .container {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 300px; /* Helps with responsiveness */
+        }
+
+        /* --- Card Style --- */
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #2e7d32;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* --- Table Styling --- */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border-bottom: 1px solid #ddd; /* Only bottom border */
+            padding: 12px 8px; /* More padding */
+            text-align: left;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+            color: #444;
+        }
+
+        /* Table image styling */
+        td img {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        /* --- Form Styling --- */
+        .form-row {
+            margin-bottom: 15px;
+        }
+        .form-row label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .form-row input[type="text"],
+        .form-row input[type="number"],
+        .form-row input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        /* Button Styling */
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            background-color: #ff9800;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn-submit:hover {
+            background-color: #f57c00;
+        }
+
+        .btn-approve, .btn-reject {
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .btn-approve {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .btn-reject {
+            background-color: #ffebee;
+            color: #c62828;
+            margin-left: 5px;
+        }
+
     </style>
 </head>
 <body>
-<h2>Owner Dashboard</h2>
-<p>Welcome, <b th:text="${owner.name}"></b>! (<span th:text="${owner.ownerType}"></span>)</p>
+
+<script th:if="${successMessage}">
+    alert(/*[[${successMessage}]]*/);
+</script>
+
+<nav class="navbar">
+    <a th:href="@{/}" class="logo">🌾 IndiFarm Rental</a>
+    <div class="nav-buttons">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="page-header">
+    <h2>Owner Dashboard</h2>
+    <p>Welcome, <b th:text="${owner.name}"></b>! (<span th:text="${owner.ownerType}"></span>)</p>
+</div>
+
 
 <div class="container">
     <div class="col">
-        <h3>My Machines</h3>
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Rate/Day</th>
-                <th>Available</th>
-                <th>Image URL</th> </tr>
-            <tr th:each="m : ${machines}">
-                <td th:text="${m.name}"></td>
-                <td th:text="${m.type}"></td>
-                <td th:text_="${'₹' + m.rentalPricePerDay}"></td>
-                <td th:text="${m.available} ? 'Yes' : 'No'" th:style_="${m.available} ? 'color:green' : 'color:red'"></td>
-                <td th:text="${m.imageUrl}"></td> </tr>
-        </table>
+        <div class="card">
+            <h3>My Machines</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Rate/Day</th>
+                    <th>Available</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="m : ${machines}">
+                    <td>
+                        <img th:src="${m.imageUrl}" alt="Machine Image" />
+                    </td>
+                    <td th:text="${m.name}"></td>
+                    <td th:text="${m.type}"></td>
+                    <td th:text_="${'₹' + m.rentalPricePerDay}"></td>
+                    <td th:text="${m.available} ? 'Yes' : 'No'"
+                        th:style_="${m.available} ? 'color:green; font-weight: 600;' : 'color:red;'">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
-        <h3>Add New Machine</h3>
-        <form th:action="@{/owner/add-machine}" method="post" th:object="${newMachine}">
-            <div>
-                <label>Name:</label>
-                <input type="text" th:field="*{name}" required/>
-            </div>
-            <div>
-                <label>Type (Tractor, Harvester):</label>
-                <input type="text" th:field="*{type}" required/>
-            </div>
-            <div>
-                <label>Base Rate/Day (₹):</label>
-                <input type="number" th:field="*{rentalPricePerDay}" required/>
-            </div>
-            <div>
-                <label>Location:</label>
-                <input type="text" th:field="*{location}" required/>
-            </div>
-            <div>
-                <label>Image URL:</label>
-                <input type="text" th:field="*{imageUrl}" placeholder="e.g., https://i.imgur.com/your-image.jpg"/>
-            </div>
-            <button type="submit">Add Machine</button>
-        </form>
+        <div class="card">
+            <h3>Add New Machine</h3>
+            <form th:action="@{/owner/add-machine}" method="post" th:object="${newMachine}" enctype="multipart/form-data">
+                <div class="form-row">
+                    <label>Name:</label>
+                    <input type="text" th:field="*{name}" required/>
+                </div>
+                <div class="form-row">
+                    <label>Type (Tractor, Harvester):</label>
+                    <input type="text" th:field="*{type}" required/>
+                </div>
+                <div class="form-row">
+                    <label>Base Rate/Day (₹):</label>
+                    <input type="number" th:field="*{rentalPricePerDay}" required/>
+                </div>
+                <div class="form-row">
+                    <label>Location:</label>
+                    <input type="text" th:field="*{location}" required/>
+                </div>
+                <div class="form-row">
+                    <label>Image File:</label>
+                    <input type="file" name="imageFile" accept="image/png, image/jpeg" required/>
+                </div>
+                <button type="submit" class="btn-submit">Add Machine</button>
+            </form>
+        </div>
     </div>
-    <div class="col">
-        <h3>Pending Booking Requests</h3>
-        <table>
-            <tr>
-                <th>Machine</th>
-                <th>Farmer</th>
-                <th>Dates</th>
-                <th>My Earning</th>
-                <th>Action</th>
-            </tr>
-            <tr th:each="b : ${bookings}" th:if="${b.status == 'Pending'}">
-                <td th:text="${b.machine.name}"></td>
-                <td th:text="${b.farmer.name}"></td>
-                <td th:text_="${b.startDate + ' to ' + b.endDate}"></td>
-                <td th:text_="${'₹' + (b.totalAmount - b.platformCommission)}"></td>
-                <td>
-                    <form th:action="@{/booking/approve}" method="post" style="display: inline;">
-                        <input type="hidden" name="bookingId" th:value="${b.id}" />
-                        <button type="submit" style="color: green;">Approve</button>
-                    </form>
-                    <form th:action="@{/booking/reject}" method="post" style="display: inline;">
-                        <input type="hidden" name="bookingId" th:value="${b.id}" />
-                        <button type="submit" style="color: red;">Reject</button>
-                    </form>
-                </td>
-            </tr>
-        </table>
 
-        <h3>Confirmed Bookings</h3>
-        <table>
-            <tr>
-                <th>Machine</th>
-                <th>Farmer</th>
-                <th>Dates</th>
-                <th>Status</th>
-            </tr>
-            <tr th:each="b : ${bookings}" th:if="${b.status != 'Pending'}">
-                <td th:text="${b.machine.name}"></td>
-                <td th:text="${b.farmer.name}"></td>
-                <td th:text_="${b.startDate + ' to ' + b.endDate}"></td>
-                <td th:text="${b.status}" th:style_="${b.status == 'Approved' ? 'color:green' : 'color:red'}"></td>
-            </tr>
-        </table>
+    <div class="col">
+        <div class="card">
+            <h3>Pending Booking Requests</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Machine</th>
+                    <th>Farmer</th>
+                    <th>Dates</th>
+                    <th>Earning</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="b : ${bookings}" th:if="${b.status == 'Pending'}">
+                    <td th:text="${b.machine.name}"></td>
+                    <td th:text="${b.farmer.name}"></td>
+                    <td th:text_="${b.startDate + ' to ' + b.endDate}"></td>
+                    <td th:text_="${'₹' + (b.totalAmount - b.platformCommission)}"></td>
+                    <td>
+                        <form th:action="@{/booking/approve}" method="post" style="display: inline;">
+                            <input type="hidden" name="bookingId" th:value="${b.id}" />
+                            <button type="submit" class="btn-approve">Approve</button>
+                        </form>
+                        <form th:action="@{/booking/reject}" method="post" style="display: inline;">
+                            <input type="hidden" name="bookingId" th:value="${b.id}" />
+                            <button type="submit" class="btn-reject">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>Confirmed Bookings</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Machine</th>
+                    <th>Farmer</th>
+                    <th>Dates</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="b : ${bookings}" th:if="${b.status != 'Pending'}">
+                    <td th:text="${b.machine.name}"></td>
+                    <td th:text="${b.farmer.name}"></td>
+                    <td th:text_="${b.startDate + ' to ' + b.endDate}"></td>
+                    <td th:text="${b.status}"
+                        th:style_="${b.status == 'Approved' ? 'color:green; font-weight: 600;' : 'color:red;'">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
 </body>
 </html>

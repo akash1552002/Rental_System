@@ -1,166 +1,322 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <title>Admin (CHC) Dashboard</title>-->
-<!--    <style>-->
-<!--        body { font-family: Arial, sans-serif; }-->
-<!--        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }-->
-<!--        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }-->
-<!--        th { background-color: #f2f2f2; }-->
-<!--    </style>-->
-<!--</head>-->
-<!--<body>-->
-<!--<h2>Admin (CHC) Dashboard</h2>-->
-<!--<p>Welcome, <b th:text="${adminName}"></b>!</p>-->
-
-<!--<h3>CHC Machine Inventory</h3>-->
-<!--<table>-->
-<!--    <tr>-->
-<!--        <th>Name</th>-->
-<!--        <th>Type</th>-->
-<!--        <th>Base Rate/Day</th>-->
-<!--        <th>Available</th>-->
-<!--    </tr>-->
-<!--    <tr th:each="m : ${chcMachines}">-->
-<!--        <td th:text="${m.name}"></td>-->
-<!--        <td th:text="${m.type}"></td>-->
-<!--        <td th:text_="${'₹' + m.rentalPricePerDay}"></td>-->
-<!--        <td th:text="${m.available} ? 'Yes' : 'No'" th:style_="${m.available} ? 'color:green' : 'color:red'"></td>-->
-<!--    </tr>-->
-<!--</table>-->
-<!--<h3>Pending Booking Requests (Subsidy)</h3>-->
-<!--<table>-->
-<!--    <tr>-->
-<!--        <th>Machine</th>-->
-<!--        <th>Farmer</th>-->
-<!--        <th>Dates</th>-->
-<!--        <th>Total</th>-->
-<!--        <th>Subsidy</th>-->
-<!--        <th>Final Price</th>-->
-<!--        <th>Action</th>-->
-<!--    </tr>-->
-<!--    <tr th:each="b : ${bookings}" th:if="${b.status == 'Pending'}">-->
-<!--        <td th:text="${b.machine.name}"></td>-->
-<!--        <td th:text="${b.farmer.name}"></td>-->
-<!--        <td th:text_="${b.startDate + ' to ' + b.endDate}"></td>-->
-<!--        <td th:text_="${'₹' + b.totalAmount}"></td>-->
-<!--        <td th:text_="${'₹' + b.subsidyAmount}"></td>-->
-<!--        <td th:text_="${'₹' + b.finalAmount}"></td>-->
-<!--        <td>-->
-<!--            <form th:action="@{/booking/approve}" method="post" style="display: inline;">-->
-<!--                <input type="hidden" name="bookingId" th:value="${b.id}" />-->
-<!--                <button type="submit" style="color: green;">Approve</button>-->
-<!--            </form>-->
-<!--            <form th:action="@{/booking/reject}" method="post" style="display: inline;">-->
-<!--                <input type="hidden" name="bookingId" th:value="${b.id}" />-->
-<!--                <button type="submit" style="color: red;">Reject</button>-->
-<!--            </form>-->
-<!--        </td>-->
-<!--    </tr>-->
-<!--</table>-->
-
-<!--<h3>All Other Bookings</h3>-->
-<!--<table>-->
-<!--    <tr>-->
-<!--        <th>Machine</th>-->
-<!--        <th>Farmer</th>-->
-<!--        <th>Dates</th>-->
-<!--        <th>Status</th>-->
-<!--    </tr>-->
-<!--    <tr th:each="b : ${bookings}" th:if="${b.status != 'Pending'}">-->
-<!--        <td th:text="${b.machine.name}"></td>-->
-<!--        <td th:text="${b.farmer.name}"></td>-->
-<!--        <td th:text_="${b.startDate + ' to ' + b.endDate}"></td>-->
-<!--        <td th:text="${b.status}" th:style_="${b.status == 'Approved' ? 'color:green' : 'color:red'}"></td>-->
-<!--    </tr>-->
-<!--</table>-->
-<!--</body>-->
-<!--</html>-->
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Admin (CHC) Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .container { display: flex; gap: 30px; }
-        .col { flex: 1; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7fdf7;
+            color: #333;
+        }
+
+        /* --- Navigation Bar --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px; /* Space below navbar */
+        }
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2e7d32;
+            text-decoration: none;
+        }
+        .navbar .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-logout { /* Specific style for logout button */
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        /* --- Main Content --- */
+        .page-header {
+            max-width: 1200px;
+            margin: 0 auto 20px auto;
+            padding: 0 30px;
+        }
+
+        .page-header h2 {
+            margin: 0 0 5px 0;
+            color: #2e7d32;
+        }
+
+        .page-header p {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        /* --- Dashboard Layout --- */
+        .container {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 320px; /* Helps with responsiveness */
+        }
+
+        /* --- Card Style --- */
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #2e7d32;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .card .description {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        /* --- Table Styling --- */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border-bottom: 1px solid #ddd; /* Only bottom border */
+            padding: 12px 8px; /* More padding */
+            text-align: left;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+            color: #444;
+        }
+
+        /* Table image styling */
+        td img {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        /* Button Styling */
+        .btn-verify {
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            background-color: #ff9800;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn-verify:hover {
+            background-color: #f57c00;
+        }
+
+        .btn-approve, .btn-reject {
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .btn-approve {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .btn-reject {
+            background-color: #ffebee;
+            color: #c62828;
+            margin-left: 5px;
+        }
+
+        .no-data {
+            color: #777;
+            font-style: italic;
+        }
+
     </style>
 </head>
 <body>
-<h2>Admin (CHC) Dashboard</h2>
-<p>Welcome, <b th:text="${adminName}"></b>!</p>
+
+<nav class="navbar">
+    <a th:href="@{/}" class="logo">🌾 IndiFarm Rental</a>
+    <div class="nav-buttons">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="page-header">
+    <h2>Admin (CHC) Dashboard</h2>
+    <p>Welcome, <b th:text="${adminName}"></b>!</p>
+</div>
 
 <div class="container">
     <div class="col">
-        <h3>Pending Booking Requests (Subsidy)</h3>
-        <table th:if="${!bookings.isEmpty()}">
-            <tr>
-                <th>Machine</th>
-                <th>Farmer</th>
-                <th>Dates</th>
-                <th>Total</th>
-                <th>Subsidy</th>
-                <th>Final Price</th>
-                <th>Action</th>
-            </tr>
-            <tr th:each="b : ${bookings}" th:if="${b.status == 'Pending'}">
-                <td th:text="${b.machine.name}"></td>
-                <td th:text="${b.farmer.name}"></td>
-                <td th:text_="${b.startDate + ' to ' + b.endDate}"></td>
-                <td th:text_="${'₹' + b.totalAmount}"></td>
-                <td th:text_="${'₹' + b.subsidyAmount}"></td>
-                <td th:text_="${'₹' + b.finalAmount}"></td>
-                <td>
-                    <form th:action="@{/booking/approve}" method="post" style="display: inline;">
-                        <input type="hidden" name="bookingId" th:value="${b.id}" />
-                        <button type="submit" style="color: green;">Approve</button>
-                    </form>
-                    <form th:action="@{/booking/reject}" method="post" style="display: inline;">
-                        <input type="hidden" name="bookingId" th:value="${b.id}" />
-                        <button type"submit" style="color: red;">Reject</button>
-                    </form>
-                </td>
-            </tr>
-        </table>
+        <div class="card">
+            <h3>Farmer Verification</h3>
+            <p class="description">Review details and verify farmers to make them eligible for subsidies.</p>
 
+            <div th:if="${unverifiedFarmers.isEmpty()}">
+                <p class="no-data">No farmers are currently pending verification.</p>
+            </div>
+
+            <table th:if="${!unverifiedFarmers.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>Farmer Name</th>
+                    <th>Aadhar</th>
+                    <th>Land (Acres)</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="farmer : ${unverifiedFarmers}">
+                    <td th:text="${farmer.name}"></td>
+                    <td th:text="${farmer.aadharNumber}"></td>
+                    <td th:text="${farmer.landSizeInAcres}"></td>
+                    <td>
+                        <form th:action="@{/admin/verify-farmer}" method="post">
+                            <input type="hidden" name="farmerId" th:value="${farmer.id}" />
+                            <button type="submit" class="btn-verify">Verify</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>Your CHC Machine Inventory</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Rate/Day</th>
+                    <th>Available</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="m : ${chcMachines}">
+                    <td>
+                        <img th:src="${m.imageUrl}" alt="Machine Image" />
+                    </td>
+                    <td th:text="${m.name}"></td>
+                    <td th:text="${m.type}"></td>
+                    <td th:text_="${'₹' + m.rentalPricePerDay}"></td>
+                    <td th:text="${m.available} ? 'Yes' : 'No'"
+                        th:style_="${m.available} ? 'color:green; font-weight: 600;' : 'color:red;'">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="col">
-        <h3>Farmer Verification</h3>
-        <p>Review details and verify farmers to make them eligible for subsidies.</p>
+        <div class="card">
+            <h3>Pending Booking Requests (Subsidy)</h3>
 
-        <div th:if="${unverifiedFarmers.isEmpty()}">
-            <p>No farmers are currently pending verification.</p>
+            <div th:if="${#lists.isEmpty(bookings.?[status == 'Pending'])}">
+                <p class="no-data">No pending booking requests.</p>
+            </div>
+
+            <table th:if="${!#lists.isEmpty(bookings.?[status == 'Pending'])}">
+                <thead>
+                <tr>
+                    <th>Machine</th>
+                    <th>Farmer</th>
+                    <th>Dates</th>
+                    <th>Final Price</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="b : ${bookings}" th:if="${b.status == 'Pending'}">
+                    <td th:text="${b.machine.name}"></td>
+                    <td th:text="${b.farmer.name}"></td>
+                    <td th:text_="${b.startDate + ' to ' + b.endDate}"></td>
+                    <td th:text_="${'₹' + b.finalAmount}"></td>
+                    <td>
+                        <form th:action="@{/booking/approve}" method="post" style="display: inline;">
+                            <input type="hidden" name="bookingId" th:value="${b.id}" />
+                            <button type="submit" class="btn-approve">Approve</button>
+                        </form>
+                        <form th:action="@{/booking/reject}" method="post" style="display: inline;">
+                            <input type="hidden" name="bookingId" th:value="${b.id}" />
+                            <button type="submit" class="btn-reject">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
 
-        <table th:if="${!unverifiedFarmers.isEmpty()}">
-            <thead>
-            <tr>
-                <th>Farmer Name</th>
-                <th>Aadhar</th>
-                <th>Land (Acres)</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="farmer : ${unverifiedFarmers}">
-                <td th:text="${farmer.name}"></td>
-                <td th:text="${farmer.aadharNumber}"></td>
-                <td th:text="${farmer.landSizeInAcres}"></td>
-                <td>
-                    <form th:action="@{/admin/verify-farmer}" method="post">
-                        <input type="hidden" name="farmerId" th:value="${farmer.id}" />
-                        <button type="submit">Verify</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="card">
+            <h3>All Other Bookings</h3>
+
+            <div th:if="${#lists.isEmpty(bookings.?[status != 'Pending'])}">
+                <p class="no-data">No other bookings found.</p>
+            </div>
+
+            <table th:if="${!#lists.isEmpty(bookings.?[status != 'Pending'])}">
+                <thead>
+                <tr>
+                    <th>Machine</th>
+                    <th>Farmer</th>
+                    <th>Dates</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="b : ${bookings}" th:if="${b.status != 'Pending'}">
+                    <td th:text="${b.machine.name}"></td>
+                    <td th:text="${b.farmer.name}"></td>
+                    <td th:text_="${b.startDate + ' to ' + b.endDate}"></td>
+                    <td th:text="${b.status}"
+                        th:style_="${b.status == 'Approved' ? 'color:green; font-weight: 600;' : 'color:red;'}">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 </body>

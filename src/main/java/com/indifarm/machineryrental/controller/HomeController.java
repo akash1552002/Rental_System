@@ -107,7 +107,8 @@ package com.indifarm.machineryrental.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indifarm.machineryrental.dto.CategoryDTO; // Import this
+import com.indifarm.machineryrental.dto.CategoryDTO;
+import com.indifarm.machineryrental.service.MachineService; // Import MachineService
 import jakarta.annotation.PostConstruct;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -125,13 +126,15 @@ public class HomeController {
 
     private final ResourceLoader resourceLoader;
     private final ObjectMapper objectMapper;
+    private final MachineService machineService; // <-- ADDED
 
     // This list will hold all our category objects
     private List<CategoryDTO> categories;
 
-    public HomeController(ResourceLoader resourceLoader, ObjectMapper objectMapper) {
+    public HomeController(ResourceLoader resourceLoader, ObjectMapper objectMapper, MachineService machineService) { // <-- MODIFIED
         this.resourceLoader = resourceLoader;
         this.objectMapper = objectMapper;
+        this.machineService = machineService; // <-- ADDED
     }
 
     /**
@@ -170,6 +173,11 @@ public class HomeController {
 
         model.addAttribute("machineryQuery", machinery);
         model.addAttribute("locationQuery", location);
+
+        // --- MODIFIED ---
+        // Call the service to get machines from the database
+        model.addAttribute("machines", machineService.searchMachines(machinery, location));
+        // --- END ---
 
         return "search-results";
     }

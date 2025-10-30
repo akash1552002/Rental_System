@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Search Results - IndiFarm</title>
     <style>
+        /* All previous styles are unchanged */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             margin: 0;
@@ -156,61 +157,42 @@
 
     <div class="machine-grid">
 
-        <div class="machine-card">
-            <img src="https://i.imgur.com/j70qf9I.jpeg" alt="Harvester" />
+        <div class="machine-card" th:each="m : ${machines}">
+
+            <img th:src="${m.imageUrl != null ? m.imageUrl : 'https://i.imgur.com/A83c1pE.jpeg'}" alt="Machine Image" />
+
             <div class="card-body">
-                <div class="card-title">🏛️ New Holland TC5.30</div>
-                <div class="card-info">
-                    <strong>Location:</strong> Thane CHC<br/>
-                    <strong>Status:</strong> Available
+
+                <div class="card-title">
+                    <span th:if="${m.owner.ownerType == 'GOVERNMENT_CHC'}">🏛️</span>
+                    <span th:if="${m.owner.ownerType == 'PRIVATE'}">🏠</span>
+                    <span th:text="${m.name}">Machine Name</span>
                 </div>
+
+                <div class="card-info">
+                    <strong>Owner:</strong> <span th:text="${m.owner.name}">Owner Name</span><br/>
+                    <strong>Location:</strong> <span th:text="${m.location}">Location</span><br/>
+                    <strong>Status:</strong>
+                    <span th:text="${m.available} ? 'Available' : 'Unavailable'"
+                          th:style="${m.available} ? 'color:green' : 'color:red'">Status</span>
+                </div>
+
                 <div class="card-price">
                     <div class="price-details">
                         <span class="base-rate">Rent starts from</span>
-                        <span class="final-rate" style="color: green;">₹600 / hour</span>
-                        <span class="subsidy-save">(Save ₹400!)</span>
+                        <span class="final-rate" th:text_="${'₹' + m.rentalPricePerDay + ' / day'}">₹900 / day</span>
+
+                        <span class="subsidy-save" th:if="${m.owner.ownerType == 'GOVERNMENT_CHC'}">
+                            (Subsidy available)
+                        </span>
                     </div>
                     <a th:href="@{/register}" class="btn btn-book">View Details</a>
                 </div>
             </div>
         </div>
 
-        <div class="machine-card">
-            <img src="https://i.imgur.com/vNVmF6N.jpeg" alt="Tractor" />
-            <div class="card-body">
-                <div class="card-title">🏠 John Deere 5055</div>
-                <div class="card-info">
-                    <strong>Owner:</strong> Ramesh Sharma<br/>
-                    <strong>Location:</strong> 5 km away<br/>
-                    <span class="rating">4.8 ⭐</span>
-                </div>
-                <div class="card-price">
-                    <div class="price-details">
-                        <span class="base-rate">Rent starts from</span>
-                        <span class="final-rate">₹850 / hour</span>
-                    </div>
-                    <a th:href="@{/register}" class="btn btn-book">View Details</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="machine-card">
-            <img src="https://i.imgur.com/A83c1pE.jpeg" alt="Cultivator" />
-            <div class="card-body">
-                <div class="card-title">🏠 Mahindra Cultivator</div>
-                <div class="card-info">
-                    <strong>Owner:</strong> Ramesh Sharma<br/>
-                    <strong>Location:</strong> 8 km away<br/>
-                    <span class="rating">4.5 ⭐</span>
-                </div>
-                <div class="card-price">
-                    <div class="price-details">
-                        <span class="base-rate">Rent starts from</span>
-                        <span class="final-rate">₹900 / day</span>
-                    </div>
-                    <a th:href="@{/register}" class="btn btn-book">View Details</a>
-                </div>
-            </div>
+        <div th:if="${machines == null or machines.isEmpty()}">
+            <p>No machines found matching your criteria.</p>
         </div>
 
     </div>
