@@ -36,11 +36,16 @@ public class Farmer {
     private String email;
     private String address;
     private String district;
+    //
+
 
     // Fields for subsidy eligibility
     private String aadharNumber;
     private Double landSizeInAcres;
     private boolean isVerified = false; // Default to false, admin can verify
+    //
+    private String farmerCategory;
+    private String categoryProofUrl;
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")

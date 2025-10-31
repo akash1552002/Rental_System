@@ -14,7 +14,7 @@
   {
     "name": "Land Preparation",
     "icon": "🌱",
-    "searchQuery": "Land Preparation",
+    "searchQuery": "Cultivator",
     "machines": [
       "Mouldboard Plough",
       "Disc Plough",
@@ -39,7 +39,7 @@
   {
     "name": "Harvesting & Threshing",
     "icon": "🌾",
-    "searchQuery": "Harvesting",
+    "searchQuery": "Harvester",
     "machines": [
       "Sickle",
       "Scythe",

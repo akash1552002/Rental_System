@@ -40,9 +40,14 @@ import com.indifarm.machineryrental.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
-
+import java.io.IOException; // <-- 2. IMPORT
+import java.nio.file.Files; // <-- 3. IMPORT
+import java.nio.file.Path; // <-- 4. IMPORT
+import java.nio.file.Paths; // <-- 5. IMPORT
+import java.util.UUID;
 @Service
 public class UserService {
 
@@ -50,7 +55,7 @@ public class UserService {
     private final FarmerRepository farmerRepository;
     private final OwnerRepository ownerRepository;
     private final PasswordEncoder passwordEncoder;
-
+    public static String PROOF_UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/src/main/resources/static/proofs";
     public UserService(UserRepository userRepository, FarmerRepository farmerRepository, OwnerRepository ownerRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.farmerRepository = farmerRepository;
@@ -59,8 +64,11 @@ public class UserService {
     }
 
     @Transactional
-    public User register(RegistrationRequest request) {
+    public User register(RegistrationRequest request, MultipartFile categoryProofFile) throws IOException {
         // 1. Create and save the User
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new RuntimeException("Error: Username is already taken!");
+        }
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -79,7 +87,29 @@ public class UserService {
             farmer.setDistrict(request.getDistrict());
             farmer.setAadharNumber(request.getAadharNumber());
             farmer.setLandSizeInAcres(request.getLandSizeInAcres());
+            farmer.setFarmerCategory(request.getFarmerCategory()); // <-- ADD THIS
             farmer.setVerified(false); // Admin must verify later
+            //
+            if (categoryProofFile != null && !categoryProofFile.isEmpty()) {
+                Path uploadPath = Paths.get(PROOF_UPLOAD_DIRECTORY);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                String originalFilename = categoryProofFile.getOriginalFilename();
+                String extension = "";
+                if (originalFilename != null && originalFilename.contains(".")) {
+                    extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                }
+                String uniqueFileName = UUID.randomUUID().toString() + extension;
+
+                Path filePath = uploadPath.resolve(uniqueFileName);
+                Files.copy(categoryProofFile.getInputStream(), filePath);
+
+                // Set the web-accessible path on the farmer object
+                farmer.setCategoryProofUrl("/proofs/" + uniqueFileName);
+            }
+             //
             farmerRepository.save(farmer);
             savedUser.setFarmer(farmer);
 

@@ -40,6 +40,8 @@ import com.indifarm.machineryrental.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile; // <-- 1. IMPORT
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AuthController {
@@ -61,13 +63,29 @@ public class AuthController {
         return "register";
     }
 
-    @PostMapping("/register")
-    public String registerUser(@ModelAttribute RegistrationRequest registrationRequest) {
-        try {
-            userService.register(registrationRequest);
-            return "redirect:/login?success";
-        } catch (Exception e) {
-            return "redirect:/register?error";
-        }
+//    @PostMapping("/register")
+//    public String registerUser(@ModelAttribute RegistrationRequest registrationRequest) {
+//        try {
+//            userService.register(registrationRequest);
+//            return "redirect:/login?success";
+//        } catch (Exception e) {
+//            return "redirect:/register?error";
+//        }
+//    }
+@PostMapping("/register")
+public String registerUser(@ModelAttribute RegistrationRequest registrationRequest,
+                           // --- 2. ADD THIS PARAMETER ---
+                           @RequestParam("categoryProofFile") MultipartFile categoryProofFile,
+                           RedirectAttributes redirectAttributes) {
+    try {
+        // --- 3. PASS THE FILE TO THE SERVICE ---
+        userService.register(registrationRequest, categoryProofFile);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Registration successful! Please login.");
+        return "redirect:/login";
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        return "redirect:/register";
     }
+}
 }

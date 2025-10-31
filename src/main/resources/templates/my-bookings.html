@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Bookings - IndiFarm</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7fdf7;
+            color: #333;
+        }
+
+        /* --- Navigation Bar --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px; /* Space below navbar */
+        }
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2e7d32;
+            text-decoration: none;
+        }
+        .navbar .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s ease;
+        }
+        .btn-secondary { /* Style for "Dashboard" link */
+             background-color: #e8f5e9;
+             color: #2e7d32;
+        }
+         .btn-secondary:hover {
+             background-color: #dceddc;
+         }
+        .btn-logout {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+         .btn-logout:hover {
+             background-color: #d5d5d5;
+         }
+
+
+        /* --- Main Content --- */
+        .page-container {
+            max-width: 1000px; /* Slightly narrower for table */
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* --- Card & Table Styling --- */
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #2e7d32;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 12px 8px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+            color: #444;
+        }
+        .no-data {
+            color: #777;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a th:href="@{/}" class="logo">🌾 IndiFarm Rental</a>
+    <div class="nav-buttons">
+        <a th:href="@{/farmer/dashboard}" class="btn btn-secondary">Dashboard</a>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="page-container">
+    <div class="card">
+        <h3>My Bookings</h3>
+
+        <div th:if="${bookings.isEmpty()}">
+            <p class="no-data">You haven't made any bookings yet.</p>
+        </div>
+
+        <table th:if="${!bookings.isEmpty()}">
+            <thead>
+            <tr>
+                <th>Machine</th>
+                <th>Owner</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Final Price</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="b : ${bookings}">
+                <td th:text="${b.machine.name}"></td>
+                <td th:text="${b.machine.owner.name}"></td>
+                <td th:text="${b.startDate}"></td>
+                <td th:text="${b.endDate}"></td>
+                <td th:text_="${'₹' + b.finalAmount}"></td>
+                <td th:text="${b.status}"
+                    th:style_="${b.status == 'Approved' ? 'color:green; font-weight: 600;' : (b.status == 'Rejected' ? 'color:red;' : 'color:orange;')}">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

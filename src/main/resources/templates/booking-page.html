@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Machine - IndiFarm</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7fdf7;
+            color: #333;
+        }
+
+        /* --- Navigation Bar --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2e7d32;
+            text-decoration: none;
+        }
+        .navbar .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-logout {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        /* --- Booking Container --- */
+        .booking-container {
+            display: flex;
+            gap: 30px;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Column for Image */
+        .image-col {
+            flex: 1.5; /* Image column is wider */
+        }
+        .image-col img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Column for Details and Form */
+        .details-col {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .details-col .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .details-col .card-info {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        .details-col .card-info strong {
+            font-weight: 600;
+            color: #444;
+        }
+
+        /* --- Price Display --- */
+        .card-price {
+            margin-bottom: 25px;
+        }
+        .price-details .base-rate {
+            text-decoration: line-through;
+            color: #888;
+            font-size: 1rem;
+            display: block;
+        }
+        .price-details .final-rate {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: block;
+            color: #2e7d32; /* Green for subsidized price */
+        }
+        .price-details .final-rate.private {
+            color: #333; /* Black for regular price */
+        }
+        .price-details .subsidy-save {
+            font-size: 0.9rem;
+            color: #2e7d32;
+            font-weight: 600;
+            display: block;
+        }
+
+        /* --- Booking Form --- */
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-row div {
+            flex: 1;
+        }
+        .form-row label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .form-row input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .btn-book {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            background-color: #ff9800;
+            color: #fff;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-book:hover {
+            background-color: #f57c00;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a th:href="@{/}" class="logo">🌾 IndiFarm Rental</a>
+    <div class="nav-buttons">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="booking-container" th:object="${machine}">
+
+    <div class="image-col">
+        <img th:src="*{imageUrl}" alt="Machine Image" />
+    </div>
+
+    <div class="details-col">
+        <div class="card-title">
+            <span th:if="*{owner.ownerType == 'GOVERNMENT_CHC'}">🏛️</span>
+            <span th:if="*{owner.ownerType == 'PRIVATE'}">🏠</span>
+            <span th:text="*{name}">Machine Name</span>
+        </div>
+
+        <div class="card-info">
+            <strong>Owner:</strong> <span th:text="*{owner.name}">Owner Name</span><br/>
+            <strong>Location:</strong> <span th:text="*{location}">Location</span><br/>
+            <strong>Type:</strong> <span th:text="*{type}">Type</span><br/>
+            <strong>Status:</strong>
+            <span th:text="*{available} ? 'Available' : 'Unavailable'"
+                  th:style="*{available} ? 'color:green' : 'color:red'">Status</span>
+        </div>
+
+        <div class="card-price">
+            <div class="price-details">
+                <span class="base-rate"
+                      th:if="${isSubsidized}"
+                      th:text_="${'₹' + machine.rentalPricePerDay + ' / day'}">
+                </span>
+
+                <span class="final-rate"
+                      th:classappend="${!isSubsidized} ? 'private'"
+                      th:text_="${'₹' + calculatedPrice + ' / day'}">
+                </span>
+
+                <span class="subsidy-save" th:if="${isSubsidized}">
+                    (Subsidy Applied!)
+                </span>
+            </div>
+        </div>
+
+        <form class="card-booking-form" th:action="@{/book}" method="post">
+            <input type="hidden" name="machineId" th:value="*{id}" />
+            <div class="form-row">
+                <div>
+                    <label>From Date:</label>
+                    <input type="date" name="startDate" required>
+                </div>
+                <div>
+                    <label>To Date:</label>
+                    <input type="date" name="endDate" required>
+                </div>
+            </div>
+            <button type="submit" class="btn-book">Confirm Booking</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
