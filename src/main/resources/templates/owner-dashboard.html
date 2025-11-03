@@ -32,6 +32,7 @@
         .navbar .nav-buttons {
             display: flex;
             gap: 10px;
+            align-items: center; /* <-- ADDED */
         }
         .btn {
             padding: 10px 20px;
@@ -45,7 +46,7 @@
             background-color: #e0e0e0;
             color: #333;
         }
-.btn-add-machine {
+        .btn-add-machine {
             background-color: #e8f5e9;
             color: #2e7d32;
             padding: 10px 20px;
@@ -58,13 +59,7 @@
         .btn-add-machine:hover {
              background-color: #dceddc;
          }
-        /* --- Main Content --- */
-        .page-header {
-            max-width: 1200px;
-            margin: 0 auto 20px auto;
-            padding: 0 30px;
-        }
-.btn-edit {
+         .btn-edit {
             padding: 5px 10px;
             font-size: 0.9rem;
             font-weight: 600;
@@ -76,6 +71,13 @@
         }
         .btn-edit:hover {
             background-color: #dceddc;
+        }
+
+        /* --- Main Content --- */
+        .page-header {
+            max-width: 1200px;
+            margin: 0 auto 20px auto;
+            padding: 0 30px;
         }
         .btn-delete {
             padding: 5px 10px;
@@ -201,6 +203,21 @@
             color: #c62828;
             margin-left: 5px;
         }
+        .btn-delete {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #c62828;
+            background-color: #ffebee;
+            border-radius: 6px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .btn-delete:hover {
+            background-color: #ffcdd2;
+        }
 
         .no-data {
             color: #777;
@@ -231,38 +248,6 @@
 </div>
 <div class="container">
     <div class="col">
-        <!--        <div class="card">-->
-        <!--            <h3>Farmer Verification</h3>-->
-        <!--            <p class="description">Review details and verify farmers to make them eligible for subsidies.</p>-->
-
-        <!--            <div th:if="${unverifiedFarmers.isEmpty()}">-->
-        <!--                <p class="no-data">No farmers are currently pending verification.</p>-->
-        <!--            </div>-->
-
-        <!--            <table th:if="${!unverifiedFarmers.isEmpty()}">-->
-        <!--                <thead>-->
-        <!--                <tr>-->
-        <!--                    <th>Farmer Name</th>-->
-        <!--                    <th>Aadhar</th>-->
-        <!--                    <th>Land (Acres)</th>-->
-        <!--                    <th>Action</th>-->
-        <!--                </tr>-->
-        <!--                </thead>-->
-        <!--                <tbody>-->
-        <!--                <tr th:each="farmer : ${unverifiedFarmers}">-->
-        <!--                    <td th:text="${farmer.name}"></td>-->
-        <!--                    <td th:text="${farmer.aadharNumber}"></td>-->
-        <!--                    <td th:text="${farmer.landSizeInAcres}"></td>-->
-        <!--                    <td>-->
-        <!--                        <form th:action="@{/admin/verify-farmer}" method="post">-->
-        <!--                            <input type="hidden" name="farmerId" th:value="${farmer.id}" />-->
-        <!--                            <button type="submit" class="btn-verify">Verify</button>-->
-        <!--                        </form>-->
-        <!--                    </td>-->
-        <!--                </tr>-->
-        <!--                </tbody>-->
-        <!--            </table>-->
-        <!--        </div>-->
         <div class="card">
             <h3>Farmer Verification</h3>
             <p class="description">Review details and verify farmers to make them eligible for subsidies.</p>
@@ -315,6 +300,7 @@
                     <th>Type</th>
                     <th>Rate/Day</th>
                     <th>Available</th>
+                    <th>Action</th> 
                 </tr>
                 </thead>
                 <tbody>
