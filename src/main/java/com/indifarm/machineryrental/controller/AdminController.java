@@ -1,107 +1,24 @@
-////package com.indifarm.machineryrental.controller;
-////
-////import com.indifarm.machineryrental.repository.MachineRepository;
-////import org.springframework.beans.factory.annotation.Autowired;
-////import org.springframework.stereotype.Controller;
-////import org.springframework.ui.Model;
-////import org.springframework.web.bind.annotation.GetMapping;
-////import org.springframework.web.bind.annotation.RequestMapping;
-////
-////@Controller
-////@RequestMapping("/admin")
-////public class AdminController {
-////    @Autowired
-////    private MachineRepository machineRepo;
-////
-////    @GetMapping("/dashboard")
-////    public String adminDashboard(Model model) {
-////        model.addAttribute("chcMachines", machineRepo.findAll());
-////        return "admin-dashboard";
-////    }
-////
-////    @GetMapping("/add-machine")
-////    public String addCHCMachinePage() {
-////        return "add-machine";
-////    }
-////}
-////
-//
-//package com.indifarm.machineryrental.controller;
-//
-//import com.indifarm.machineryrental.model.Owner;
-//import com.indifarm.machineryrental.repository.OwnerRepository;
-//import com.indifarm.machineryrental.service.BookingService;
-//import com.indifarm.machineryrental.service.MachineService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.ui.Model;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//
-//import java.security.Principal;
-//
-//@Controller
-//@RequestMapping("/admin")
-//public class AdminController {
-//
-//    @Autowired private MachineService machineService;
-//    @Autowired private OwnerRepository ownerRepo;
-//    @Autowired private BookingService bookingService;
-//
-//    @GetMapping("/dashboard")
-//    public String adminDashboard(Model model, Principal principal) {
-//        // We assume the "ADMIN" user is linked to a "GOVERNMENT_CHC" Owner profile
-//        Owner adminOwner = ownerRepo.findByUserUsername(principal.getName())
-//                .orElseThrow(() -> new RuntimeException("Admin owner profile not found"));
-//
-//        model.addAttribute("adminName", adminOwner.getName());
-//        model.addAttribute("chcMachines", adminOwner.getMachines());
-//        model.addAttribute("bookings", bookingService.getBookingsByOwner(adminOwner));
-//        return "admin-dashboard";
-//    }
-//
-//    @GetMapping("/add-machine")
-//    public String addCHCMachinePage() {
-//        return "add-machine";
-//    }
-//}
 package com.indifarm.machineryrental.controller;
 
-//import com.indifarm.machineryrental.model.Owner;
-//import com.indifarm.machineryrental.repository.OwnerRepository;
-//import com.indifarm.machineryrental.service.BookingService;
-//import com.indifarm.machineryrental.service.FarmerService; // Import this
-//import com.indifarm.machineryrental.service.MachineService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.ui.Model;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.PostMapping; // Import this
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestParam; // Import this
-
-import com.indifarm.machineryrental.model.Machine; // <-- IMPORT
+import com.indifarm.machineryrental.model.Machine;
 import com.indifarm.machineryrental.model.Owner;
 import com.indifarm.machineryrental.repository.OwnerRepository;
 import com.indifarm.machineryrental.service.BookingService;
-import com.indifarm.machineryrental.service.FarmerService; // Import this
+import com.indifarm.machineryrental.service.FarmerService;
 import com.indifarm.machineryrental.service.MachineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile; // <-- IMPORT
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.io.IOException; // <-- IMPORT
-import java.nio.file.Files; // <-- IMPORT
-import java.nio.file.Path; // <-- IMPORT
-import java.nio.file.Paths; // <-- IMPORT
-import java.security.Principal;
-import java.util.UUID; // <-- IMPORT
-
-import static com.indifarm.machineryrental.controller.OwnerController.UPLOAD_DIRECTORY;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin")
@@ -111,7 +28,9 @@ public class AdminController {
     @Autowired private OwnerRepository ownerRepo;
     @Autowired private BookingService bookingService;
     @Autowired private FarmerService farmerService; // Inject FarmerService
+    
     public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/src/main/resources/static/uploads";
+    
     @GetMapping("/dashboard")
     public String adminDashboard(Model model, Principal principal) {
         // We assume the "ADMIN" user is linked to a "GOVERNMENT_CHC" Owner profile
@@ -128,18 +47,14 @@ public class AdminController {
         return "admin-dashboard";
     }
 
-//    @GetMapping("/add-machine")
-//    public String addCHCMachinePage() {
-//        return "add-machine";
-//    }
-@GetMapping("/add-machine")
-public String addCHCMachinePage(Model model) {
-    model.addAttribute("newMachine", new Machine());
-    model.addAttribute("pageTitle", "Add CHC Machine");
-    model.addAttribute("formAction", "/admin/add-machine");
-    model.addAttribute("dashboardUrl", "/admin/dashboard");
-    return "add-machine"; // Return the new common template
-}
+    @GetMapping("/add-machine")
+    public String addCHCMachinePage(Model model) {
+        model.addAttribute("newMachine", new Machine());
+        model.addAttribute("pageTitle", "Add CHC Machine");
+        model.addAttribute("formAction", "/admin/add-machine");
+        model.addAttribute("dashboardUrl", "/admin/dashboard");
+        return "add-machine"; // Return the new common template
+    }
 
     // NEW METHOD: Handles the form submission for adding a CHC machine
     @PostMapping("/add-machine")
@@ -210,6 +125,7 @@ public String addCHCMachinePage(Model model) {
 
         return "redirect:/admin/dashboard";
     }
+    
     @GetMapping("/edit-machine/{id}")
     public String showEditMachinePage(@PathVariable("id") Long id, Model model, Principal principal) {
         Owner adminOwner = ownerRepo.findByUserUsername(principal.getName())
